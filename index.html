@@ -1,346 +1,474 @@
-<!-- Skip to main content for accessibility -->
-<a href="#main-content" class="skip-link">Skip to main content</a>
+<!-- Changelog:
+1) Added semantic HTML5 structure with header, nav, main, sections, footer and skip link
+2) Added form labels with matching IDs, honeypot field, and Formspree action placeholder
+3) Added Calendly container with data attribute and deferLoadCalendly() helper function
+4) Added preconnect links, JSON-LD structured data, and GA4 placeholder in head
+5) Added explicit width/height to images where possible and aspect-ratio containers
+6) Added consistent data hooks and IDs for CSS/JS targeting (#hero, #mainForm, .cta-primary, etc)
+-->
 
-<!-- Navigation -->
-<header>
-    <nav class="site-nav" id="site-nav" role="navigation" aria-label="Main navigation">
-        <div class="site-container">
-            <a href="#" class="nav-logo">ArmanLeads</a>
-            
-            <!-- Mobile menu toggle -->
-            <button class="nav-toggle" data-js="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
-                <svg class="nav-toggle-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                    <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none"/>
-                </svg>
-            </button>
-            
-            <div class="nav-menu" id="nav-menu">
-                <a href="#contact-form" class="btn btn-primary nav-link">
-                    Get Free Audit
-                    <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
-                        <path stroke="currentColor" stroke-width="1.75" fill="none" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </a>
-                <a href="#call" class="btn btn-ghost nav-link">
-                    Book a Call
-                    <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
-                        <path stroke="currentColor" stroke-width="1.75" fill="none" d="M19 3h1a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h1m14 0V1a1 1 0 00-1-1H6a1 1 0 00-1 1v2m14 0H6m7 6v4m-2-2h4"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </nav>
-</header>
+<!-- 
+DEVELOPER NOTES FOR CSS AUTHOR:
+- Main sections use IDs: #hero, #problems, #urgency, #about, #benefits, #fit, #system, #faq, #guarantee, #pricing, #sale, #final-cta
+- Key classes: .hero__title, .hero__sub, .cta-primary, .cta-secondary, .sticky-cta, .feature-item, .step-card, .faq-item, .form-container
+- Form: #mainForm with .form-group, .form-label, .form-input, .form-help, .error-message
+- Calendly: #calendly-embed with .calendly-embed class
+- Navigation: .site-nav with .nav-toggle, .nav-menu, .nav-logo
+- Set hero image to fetchpriority="high" and use srcset for responsive loading
+- Add aspect-ratio CSS for .media containers where width/height not specified
 
-<!-- Main Content -->
-<main id="main-content" role="main">
-    <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="site-container">
-            <div class="hero-inner">
-                <div class="hero-copy">
-                    <h1 class="hero__title">Double Bookings Without Stress Or Guesswork</h1>
-                    <p class="hero__sub hero-subtitle">I handle the marketing chaos so you can focus on dentistry — while your chairs stay consistently filled.</p>
-                    
-                    <div class="hero-ctas">
-                        <a href="#contact-form" class="btn btn-primary cta-primary" data-analytics="cta">
-                            Get My Free Marketing Audit Now
-                            <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
-                                <path stroke="currentColor" stroke-width="1.75" fill="none" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </a>
-                        <a href="#call" class="btn btn-ghost cta-secondary">
-                            Book A Quick Call — You Decide When
-                            <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
-                                <path stroke="currentColor" stroke-width="1.75" fill="none" d="M19 3h1a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h1m14 0V1a1 1 0 00-1-1H6a1 1 0 00-1 1v2m14 0H6m7 6v4m-2-2h4"/>
-                            </svg>
-                        </a>
-                    </div>
-                    
-                    <div class="trust-badge">
-                        <svg class="trust-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                            <path stroke="currentColor" stroke-width="1.75" fill="none" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                            <path stroke="currentColor" stroke-width="1.75" fill="none" d="m9 12 2 2 4-4"/>
+DEVELOPER NOTES FOR JS AUTHOR:
+- Navigation toggle: data-js="nav-toggle" controls .nav-menu visibility
+- Form submission: #mainForm with data-track="auditForm" for analytics
+- FAQ accordions: data-js="accordion-toggle" buttons control answer visibility
+- Calendly: Call window.deferLoadCalendly() when user scrolls to #calendly-embed or clicks call CTA
+- Analytics: Use data-analytics attributes on CTAs ("cta", "form-submit")
+- Form validation messages go in #form-messages and individual .error-message spans
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Double your dental bookings without stress or guesswork. Premium dental marketing that fills your schedule predictably with ArmanLeads.">
+    <meta name="keywords" content="dental marketing, dentist marketing, dental practice growth, patient acquisition, dental leads">
+    <meta name="author" content="ArmanLeads">
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PMGH2ZVD');</script>
+    <!-- End Google Tag Manager --> 
+    
+    <!-- Google Analytics 4 - Replace G-XXXXXXX with your actual Measurement ID -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXX');
+    </script>
+    -->
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://armanleads.com/">
+    <meta property="og:title" content="ArmanLeads - Double Bookings Without Stress Or Guesswork">
+    <meta property="og:description" content="I handle the marketing chaos so you can focus on dentistry — while your chairs stay consistently filled.">
+    <meta property="og:image" content="https://armanleads.com/assets/hero-1200.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://armanleads.com/">
+    <meta property="twitter:title" content="ArmanLeads - Double Bookings Without Stress Or Guesswork">
+    <meta property="twitter:description" content="I handle the marketing chaos so you can focus on dentistry — while your chairs stay consistently filled.">
+    <meta property="twitter:image" content="https://armanleads.com/assets/hero-1200.jpg">
+
+    <title>ArmanLeads - Double Bookings Without Stress Or Guesswork</title>
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://armanleads.com/" />
+
+    <!-- Preconnect to improve performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://assets.calendly.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Preload hero image for LCP - CSS should set fetchpriority="high" on actual img -->
+    <link rel="preload" as="image" href="assets/hero-800.webp">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "ArmanLeads",
+        "description": "Premium dental marketing services",
+        "url": "https://armanleads.com",
+        "telephone": "+1-000-000-0000",
+        "email": "hello@armanleads.com",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Sulaymaniyah",
+            "addressRegion": "Kurdistan",
+            "addressCountry": "IQ"
+        },
+        "areaServed": {
+            "@type": "Place",
+            "name": "United States"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+1-000-000-0000",
+            "contactType": "customer service",
+            "email": "hello@armanleads.com"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMGH2ZVD"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) --> 
+    
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="site-nav" id="site-nav" role="navigation" aria-label="Main navigation">
+            <div class="site-container">
+                <a href="#" class="nav-logo">ArmanLeads</a>
+                
+                <!-- Mobile menu toggle -->
+                <button class="nav-toggle" data-js="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                    <svg class="nav-toggle-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#contact-form" class="btn btn-primary nav-link">
+                        Get Free Audit
+                        <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
+                            <path stroke="currentColor" stroke-width="1.75" fill="none" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
-                        <span>I only work with 5 dentists at a time</span>
-                    </div>
-                </div>
-                
-                <div class="hero-media">
-                    <!-- Assets to create: hero-desktop.webp, hero-tablet.webp, hero-mobile.webp -->
-                    <div class="media media--hero" style="aspect-ratio: 4/3;">
-                        <picture>
-                            <source media="(min-width: 768px)" srcset="assets/hero-desktop.webp" type="image/webp">
-                            <source media="(min-width: 480px)" srcset="assets/hero-tablet.webp" type="image/webp">
-                            <source srcset="assets/hero-mobile.webp" type="image/webp">
-                            <img src="assets/hero-800.webp" alt="Smiling dentist in a busy clinic — example outcome after working with ArmanLeads" loading="eager" width="1200" height="900">
-                        </picture>
-                    </div>
+                    </a>
+                    <a href="#call" class="btn btn-ghost nav-link">
+                        Book a Call
+                        <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
+                            <path stroke="currentColor" stroke-width="1.75" fill="none" d="M19 3h1a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h1m14 0V1a1 1 0 00-1-1H6a1 1 0 00-1 1v2m14 0H6m7 6v4m-2-2h4"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
+        </nav>
+    </header>
 
-    <!-- Problems Section -->
-    <section class="problems" id="problems">
-        <div class="site-container">
-            <header class="section-header">
-                <h2>Your Practice Deserves Better Than Empty Chairs</h2>
-                <p class="section-subtitle">Does this sound familiar?</p>
-            </header>
-            
-            <div class="features">
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="1.75"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="1.75"/>
-                    </svg>
-                    <h3 class="feature-title">Slow weeks that kill cashflow</h3>
-                    <p class="feature-body">Watching overhead pile up while appointment slots stay empty, wondering if you'll cover expenses this month.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <polyline points="23,18 13.5,8.5 8.5,13.5 1,6" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <polyline points="17,18 23,18 23,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Competitors' parking lots full while yours empties</h3>
-                    <p class="feature-body">Other dental offices have packed parking lots while your practice struggles to fill appointments.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <path d="m17 11 5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <path d="m22 11-5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Word-of-mouth drying up</h3>
-                    <p class="feature-body">The referrals that once kept you busy have slowed to a trickle, and you're not sure how to replace them.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Working late on "business stuff" instead of being home</h3>
-                    <p class="feature-body">Staying after hours trying to figure out marketing instead of enjoying dinner with your family.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="1.75"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Insurance cuts shrinking margins</h3>
-                    <p class="feature-body">Reimbursement rates keep dropping while costs stay the same, making every appointment less profitable.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <path d="m22 9-5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <path d="m17 9 5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Patients who don't show up or discount-shop</h3>
-                    <p class="feature-body">Dealing with cancellations and patients who only care about finding the cheapest option.</p>
-                </article>
-            </div>
-            
-            <p class="problem-footer">You didn't spend years in dental school to worry about empty appointment books.</p>
-        </div>
-    </section>
-
-    <!-- Urgency Section -->
-    <section class="urgency" id="urgency">
-        <div class="site-container">
-            <h2>The Hidden Cost of Doing Nothing</h2>
-            <p class="urgency-intro">
-                Every month, people in your area search "dentist near me" over 500,000 times nationally. 
-                In Des Moines alone, that's roughly 310+ people searching daily for dental care.
-            </p>
-            <p class="urgency-intro-bold">
-                Here's what's happening while you're not visible online:
-            </p>
-            
-            <div class="urgency-stats">
-                <div class="urgency-stat">
-                    <div class="urgency-number">310+</div>
-                    <div class="urgency-label">people search "dentist near me" daily in your area</div>
-                </div>
-                <div class="urgency-stat">
-                    <div class="urgency-number">$300-800</div>
-                    <div class="urgency-label">Average new patient value per visit</div>
-                </div>
-                <div class="urgency-stat">
-                    <div class="urgency-number">15-25</div>
-                    <div class="urgency-label">Monthly missed patients</div>
-                </div>
-                <div class="urgency-stat">
-                    <div class="urgency-number">$4.5k-20k+</div>
-                    <div class="urgency-label">Monthly lost revenue</div>
-                </div>
-                <div class="urgency-stat">
-                    <div class="urgency-number">$54k-240k+</div>
-                    <div class="urgency-label">Annual opportunity cost</div>
-                </div>
-            </div>
-            
-            <p class="urgency-truth">
-                The simple truth: When someone has a toothache at 2 AM or needs a cleaning, they Google "dentist near me." 
-                If you're not showing up, they're booking with whoever is.
-            </p>
-            
-            <small class="urgency-disclaimer">
-                Based on national search data scaled to local market size. Results vary by location.
-            </small>
-            
-            <p class="urgency-bottom">
-                Every day you're invisible online, families in Des Moines are choosing other dentists. They never even knew you existed.
-            </p>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="site-container">
-            <div class="about-container">
-                <div class="about-content">
-                    <p class="about-intro">Over 40% of dentists report feeling overwhelmed by business responsibilities outside of patient care</p>
-                    <h2>I Turn Empty Chairs Into A Full Schedule Predictably.</h2>
-                    <p>
-                        You didn't spend years in dental school to become a marketing expert. You wanted to help people, not worry about Google rankings.
-                    </p>
-                    <p>
-                        Here's the thing: The best dentists aren't struggling because they're bad at dentistry. They're struggling because patient acquisition has become more complicated than a root canal.
-                    </p>
-                    <p>
-                        As a medical student, I understand patient psychology. As a marketer, I know exactly how to get them to choose YOU first.
-                    </p>
-                    <p>
-                        The transformation is simple: Instead of wondering where your next patient will come from, you'll be wondering how to fit them all in.
-                    </p>
-                    <p>
-                        You shouldn't have to choose between being an exceptional dentist and running a profitable practice.
-                    </p>
-                    <p>
-                        <strong>That's exactly the problem I solve. I handle the marketing so you can focus on what you're truly exceptional at.</strong>
-                    </p>
-                </div>
-                
-                <aside class="bio-card">
-                    <div class="bio">
-                        <div class="bio-avatar">
-                          <div class="media media--bio" style="aspect-ratio: 1/1;">
-                            <img src="assets/bio.jpg" alt="Arman — medical student + digital marketer" loading="lazy" width="140" height="140">
-                          </div>
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="site-container">
+                <div class="hero-inner">
+                    <div class="hero-copy">
+                        <h1 class="hero__title">Double Bookings Without Stress Or Guesswork</h1>
+                        <p class="hero__sub hero-subtitle">I handle the marketing chaos so you can focus on dentistry — while your chairs stay consistently filled.</p>
+                        
+                        <div class="hero-ctas">
+                            <a href="#contact-form" class="btn btn-primary cta-primary" data-analytics="cta">
+                                Get My Free Marketing Audit Now
+                                <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
+                                    <path stroke="currentColor" stroke-width="1.75" fill="none" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </a>
+                            <a href="#call" class="btn btn-ghost cta-secondary">
+                                Book A Quick Call — You Decide When
+                                <svg class="btn-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20">
+                                    <path stroke="currentColor" stroke-width="1.75" fill="none" d="M19 3h1a2 2 0 012 2v14a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h1m14 0V1a1 1 0 00-1-1H6a1 1 0 00-1 1v2m14 0H6m7 6v4m-2-2h4"/>
+                                </svg>
+                            </a>
                         </div>
-                        <p class="bio-text">
-                            I'm Arman — a medical student + digital marketer from Slemani. I combine patient psychology and targeted local ads to bring steady, high-value patients to a few select practices. I only accept 5 partners at a time so you get my full attention.
+                        
+                        <div class="trust-badge">
+                            <svg class="trust-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                <path stroke="currentColor" stroke-width="1.75" fill="none" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path stroke="currentColor" stroke-width="1.75" fill="none" d="m9 12 2 2 4-4"/>
+                            </svg>
+                            <span>I only work with 5 dentists at a time</span>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-media">
+                        <!-- Assets to create: hero-desktop.webp, hero-tablet.webp, hero-mobile.webp -->
+                        <div class="media media--hero" style="aspect-ratio: 4/3;">
+                            <picture>
+                                <source media="(min-width: 768px)" srcset="assets/hero-desktop.webp" type="image/webp">
+                                <source media="(min-width: 480px)" srcset="assets/hero-tablet.webp" type="image/webp">
+                                <source srcset="assets/hero-mobile.webp" type="image/webp">
+                                <img src="assets/hero-800.webp" alt="Smiling dentist in a busy clinic — example outcome after working with ArmanLeads" loading="eager" width="1200" height="900">
+                            </picture>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problems Section -->
+        <section class="problems" id="problems">
+            <div class="site-container">
+                <header class="section-header">
+                    <h2>Your Practice Deserves Better Than Empty Chairs</h2>
+                    <p class="section-subtitle">Does this sound familiar?</p>
+                </header>
+                
+                <div class="features">
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="1.75"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="1.75"/>
+                        </svg>
+                        <h3 class="feature-title">Slow weeks that kill cashflow</h3>
+                        <p class="feature-body">Watching overhead pile up while appointment slots stay empty, wondering if you'll cover expenses this month.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <polyline points="23,18 13.5,8.5 8.5,13.5 1,6" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <polyline points="17,18 23,18 23,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Competitors' parking lots full while yours empties</h3>
+                        <p class="feature-body">Other dental offices have packed parking lots while your practice struggles to fill appointments.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <path d="m17 11 5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <path d="m22 11-5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Word-of-mouth drying up</h3>
+                        <p class="feature-body">The referrals that once kept you busy have slowed to a trickle, and you're not sure how to replace them.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Working late on "business stuff" instead of being home</h3>
+                        <p class="feature-body">Staying after hours trying to figure out marketing instead of enjoying dinner with your family.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="1.75"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Insurance cuts shrinking margins</h3>
+                        <p class="feature-body">Reimbursement rates keep dropping while costs stay the same, making every appointment less profitable.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <path d="m22 9-5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <path d="m17 9 5 5" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Patients who don't show up or discount-shop</h3>
+                        <p class="feature-body">Dealing with cancellations and patients who only care about finding the cheapest option.</p>
+                    </article>
+                </div>
+                
+                <p class="problem-footer">You didn't spend years in dental school to worry about empty appointment books.</p>
+            </div>
+        </section>
+
+        <!-- Urgency Section -->
+        <section class="urgency" id="urgency">
+            <div class="site-container">
+                <h2>The Hidden Cost of Doing Nothing</h2>
+                <p class="urgency-intro">
+                    Every month, people in your area search "dentist near me" over 500,000 times nationally. 
+                    In Des Moines alone, that's roughly 310+ people searching daily for dental care.
+                </p>
+                <p class="urgency-intro-bold">
+                    Here's what's happening while you're not visible online:
+                </p>
+                
+                <div class="urgency-stats">
+                    <div class="urgency-stat">
+                        <div class="urgency-number">310+</div>
+                        <div class="urgency-label">people search "dentist near me" daily in your area</div>
+                    </div>
+                    <div class="urgency-stat">
+                        <div class="urgency-number">$300-800</div>
+                        <div class="urgency-label">Average new patient value per visit</div>
+                    </div>
+                    <div class="urgency-stat">
+                        <div class="urgency-number">15-25</div>
+                        <div class="urgency-label">Monthly missed patients</div>
+                    </div>
+                    <div class="urgency-stat">
+                        <div class="urgency-number">$4.5k-20k+</div>
+                        <div class="urgency-label">Monthly lost revenue</div>
+                    </div>
+                    <div class="urgency-stat">
+                        <div class="urgency-number">$54k-240k+</div>
+                        <div class="urgency-label">Annual opportunity cost</div>
+                    </div>
+                </div>
+                
+                <p class="urgency-truth">
+                    The simple truth: When someone has a toothache at 2 AM or needs a cleaning, they Google "dentist near me." 
+                    If you're not showing up, they're booking with whoever is.
+                </p>
+                
+                <small class="urgency-disclaimer">
+                    Based on national search data scaled to local market size. Results vary by location.
+                </small>
+                
+                <p class="urgency-bottom">
+                    Every day you're invisible online, families in Des Moines are choosing other dentists. They never even knew you existed.
+                </p>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="about">
+            <div class="site-container">
+                <div class="about-container">
+                    <div class="about-content">
+                        <p class="about-intro">Over 40% of dentists report feeling overwhelmed by business responsibilities outside of patient care</p>
+                        <h2>I Turn Empty Chairs Into A Full Schedule Predictably.</h2>
+                        <p>
+                            You didn't spend years in dental school to become a marketing expert. You wanted to help people, not worry about Google rankings.
+                        </p>
+                        <p>
+                            Here's the thing: The best dentists aren't struggling because they're bad at dentistry. They're struggling because patient acquisition has become more complicated than a root canal.
+                        </p>
+                        <p>
+                            As a medical student, I understand patient psychology. As a marketer, I know exactly how to get them to choose YOU first.
+                        </p>
+                        <p>
+                            The transformation is simple: Instead of wondering where your next patient will come from, you'll be wondering how to fit them all in.
+                        </p>
+                        <p>
+                            You shouldn't have to choose between being an exceptional dentist and running a profitable practice.
+                        </p>
+                        <p>
+                            <strong>That's exactly the problem I solve. I handle the marketing so you can focus on what you're truly exceptional at.</strong>
                         </p>
                     </div>
-                </aside>
-            </div>
-        </div>
-    </section>
-
-    <!-- Benefits Section -->
-    <section class="benefits" id="benefits">
-        <div class="site-container">
-            <header class="section-header">
-                <h2>What You Get When We Work Together</h2>
-            </header>
-            
-            <div class="features">
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <path d="M3 3v18h18" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <path d="m19 9-5 5-4-4-3 3" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Predictable Income</h3>
-                    <p class="feature-body">Stop wondering if next month will cover your overhead. You'll know exactly how many new patients are coming because I track every lead, call, and booking. No more financial anxiety.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <circle cx="15" cy="8" r="3" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <polyline points="15,5 15,8 17,9" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Evenings at Home</h3>
-                    <p class="feature-body">No more staying late to manage ads or fix your website. I handle everything while you're with your family. You'll actually use your evenings for what matters most.</p>
-                </article>
-                
-                <article class="feature-item">
-                    <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                        <path d="m16 11 1 1 3-3" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                    </svg>
-                    <h3 class="feature-title">Only Serious Patients</h3>
-                    <p class="feature-body">I don't just bring you more people - I bring you the RIGHT people. Patients who value quality care, show up for appointments, and don't just price shop. Quality over quantity, always.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Fit Section -->
-    <section class="fit" id="fit">
-        <div class="site-container">
-            <header class="section-header">
-                <h2>Who It Works For</h2>
-            </header>
-            
-            <div class="fit-container">
-                <div class="fit-card fit-good">
-                    <h3>Great Fit For You if:</h3>
-                    <ul class="fit-list">
-                        <li class="fit-item">
-                            <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                                <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                            </svg>
-                            <span>Have $1500+ monthly marketing budget</span>
-                        </li>
-                        <li class="fit-item">
-                            <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                                <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                            </svg>
-                            <span>Can handle 15+ clients monthly</span>
-                        </li>
-                        <li class="fit-item">
-                            <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                                <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                            </svg>
-                            <span>Want a long term partnership</span>
-                        </li>
-                    </ul>
+                    
+                    <aside class="bio-card">
+                        <div class="bio">
+                            <div class="bio-avatar">
+                              <div class="media media--bio" style="aspect-ratio: 1/1;">
+                                <img src="assets/bio.jpg" alt="Arman — medical student + digital marketer" loading="lazy" width="140" height="140">
+                              </div>
+                            </div>
+                            <p class="bio-text">
+                                I'm Arman — a medical student + digital marketer from Slemani. I combine patient psychology and targeted local ads to bring steady, high-value patients to a few select practices. I only accept 5 partners at a time so you get my full attention.
+                            </p>
+                        </div>
+                    </aside>
                 </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="benefits" id="benefits">
+            <div class="site-container">
+                <header class="section-header">
+                    <h2>What You Get When We Work Together</h2>
+                </header>
                 
-                <div class="fit-card fit-bad">
-                    <h3>Not a Good Fit For You if:</h3>
-                    <ul class="fit-list">
-                        <li class="fit-item">
-                            <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                                <path d="m18 6-12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                                <path d="m6 6 12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                            </svg>
-                            <span>Your marketing budget is under $1500</span>
-                        </li>
-                        <li class="fit-item">
-                            <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                                <path d="m18 6-12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                                <path d="m6 6 12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                            </svg>
-                            <span>Need results this week</span>
-                        </li>
-                        <li class="fit-item">
-                            <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
-                                <path d="m18 6-12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
-                                <path d="m6 6 12 12" stroke="currentColor" stroke-width="1.75" fill="none"/></svg>
+                <div class="features">
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <path d="M3 3v18h18" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <path d="m19 9-5 5-4-4-3 3" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Predictable Income</h3>
+                        <p class="feature-body">Stop wondering if next month will cover your overhead. You'll know exactly how many new patients are coming because I track every lead, call, and booking. No more financial anxiety.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <circle cx="15" cy="8" r="3" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <polyline points="15,5 15,8 17,9" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Evenings at Home</h3>
+                        <p class="feature-body">No more staying late to manage ads or fix your website. I handle everything while you're with your family. You'll actually use your evenings for what matters most.</p>
+                    </article>
+                    
+                    <article class="feature-item">
+                        <svg class="feature-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="48" height="48">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                            <path d="m16 11 1 1 3-3" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                        </svg>
+                        <h3 class="feature-title">Only Serious Patients</h3>
+                        <p class="feature-body">I don't just bring you more people - I bring you the RIGHT people. Patients who value quality care, show up for appointments, and don't just price shop. Quality over quantity, always.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fit Section -->
+        <section class="fit" id="fit">
+            <div class="site-container">
+                <header class="section-header">
+                    <h2>Who It Works For</h2>
+                </header>
+                
+                <div class="fit-container">
+                    <div class="fit-card fit-good">
+                        <h3>Great Fit For You if:</h3>
+                        <ul class="fit-list">
+                            <li class="fit-item">
+                                <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                    <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                </svg>
+                                <span>Have $1500+ monthly marketing budget</span>
+                            </li>
+                            <li class="fit-item">
+                                <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                    <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                </svg>
+                                <span>Can handle 15+ clients monthly</span>
+                            </li>
+                            <li class="fit-item">
+                                <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                    <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                </svg>
+                                <span>Want a long term partnership</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="fit-card fit-bad">
+                        <h3>Not a Good Fit For You if:</h3>
+                        <ul class="fit-list">
+                            <li class="fit-item">
+                                <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="m18 6-12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                    <path d="m6 6 12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                </svg>
+                                <span>Your marketing budget is under $1500</span>
+                            </li>
+                            <li class="fit-item">
+                                <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="m18 6-12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                    <path d="m6 6 12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                </svg>
+                                <span>Need results this week</span>
+                            </li>
+                            <li class="fit-item">
+                                <svg class="fit-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="m18 6-12 12" stroke="currentColor" stroke-width="1.75" fill="none"/>
+                                    <path d="m6 6 12 12" stroke="currentColor" stroke-width="1.75" fill="none"/> </svg>
                                 <span>Want to manage the ads yourself</span>
                             </li>
                         </ul>
